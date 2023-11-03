@@ -1,0 +1,4 @@
+rootProject.name = 'proxy_task'
+include 'autumn'
+include 'proxy'
+
