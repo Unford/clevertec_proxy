@@ -11,7 +11,6 @@ repositories {
 
 dependencies {
     implementation 'cglib:cglib:3.3.0'
-    implementation 'org.reflections:reflections:0.10.2'
 }
 
 test {
