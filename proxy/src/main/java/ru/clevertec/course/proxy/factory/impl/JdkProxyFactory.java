@@ -9,14 +9,14 @@ import java.lang.reflect.Proxy;
 public class JdkProxyFactory implements ProxyFactory {
 
     @Override
-    public Object createProxy(ObjectInvocationHandler handler) {
-        Class<?> aClass = handler.getObject().getClass();
+    public Object createProxy(Object object, ObjectInvocationHandler handler) {
+        Class<?> aClass = object.getClass();
         Class<?>[] interfaces = ProxyReflectionUtils.getAllSuperInterfaces(aClass)
                 .toArray(new Class[0]);
 
         return Proxy.newProxyInstance(
                 aClass.getClassLoader(),
                 interfaces,
-                handler);
+                ((proxy, method, args) -> handler.invoke(object, proxy, method, args)));
     }
 }

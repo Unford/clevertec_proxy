@@ -17,12 +17,12 @@ public class LoggableProxyConfigurator implements ProxyConfigurator {
     public Object replaceWithProxyIfNeeded(Object t, Class<?> implClass) {
         if (implClass.isAnnotationPresent(Loggable.class)) {
 
-            LoggerHandler loggerHandler = new LoggerHandler(t);
+            LoggerHandler loggerHandler = new LoggerHandler();
             Object proxyInstance;
             if (ProxyReflectionUtils.hasAnyInterface(implClass)) {
-                proxyInstance = jdkProxyFactory.createProxy(loggerHandler);
+                proxyInstance = jdkProxyFactory.createProxy(t, loggerHandler);
             } else {
-                proxyInstance = cgLibProxyFactory.createProxy(loggerHandler);
+                proxyInstance = cgLibProxyFactory.createProxy(t, loggerHandler);
             }
             return proxyInstance;
         } else {

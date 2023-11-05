@@ -1,20 +1,15 @@
 package ru.clevertec.course.proxy.handler.impl;
 
-import ru.clevertec.course.proxy.handler.AbstractObjectInvocationHandler;
+import ru.clevertec.course.proxy.handler.ObjectInvocationHandler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.StringJoiner;
 
-public class LoggerHandler extends AbstractObjectInvocationHandler {
-
-
-    public LoggerHandler(Object object) {
-        super(object);
-    }
+public class LoggerHandler implements ObjectInvocationHandler {
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object object, Object proxy, Method method, Object[] args) throws Throwable{
         StringBuilder builder = new StringBuilder("Method: \"")
                 .append(method.getName())
                 .append('\"')
