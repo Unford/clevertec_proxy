@@ -1,27 +1,22 @@
 package ru.clevertec.course.proxy.factory.impl;
 
-import ru.clevertec.course.proxy.domain.model.JdkProxyJoinPoint;
-import ru.clevertec.course.proxy.factory.JoinPointHandler;
 import ru.clevertec.course.proxy.factory.ProxyFactory;
+import ru.clevertec.course.proxy.handler.ObjectInvocationHandler;
 import ru.clevertec.course.proxy.util.ProxyReflectionUtils;
 
 import java.lang.reflect.Proxy;
 
-public class JdkProxyFactory implements ProxyFactory<Object> {
-
+public class JdkProxyFactory implements ProxyFactory {
 
     @Override
-    public Object createProxy(Object object,
-                             JoinPointHandler<Object> function) {
-        Class<?>[] interfaces = ProxyReflectionUtils.getAllSuperInterfaces(object.getClass())
+    public Object createProxy(ObjectInvocationHandler handler) {
+        Class<?> aClass = handler.getObject().getClass();
+        Class<?>[] interfaces = ProxyReflectionUtils.getAllSuperInterfaces(aClass)
                 .toArray(new Class[0]);
 
         return Proxy.newProxyInstance(
-                object.getClass().getClassLoader(),
+                aClass.getClassLoader(),
                 interfaces,
-                (proxy, method, methodArgs) ->
-                        function.apply(new JdkProxyJoinPoint(proxy, object, method, methodArgs)));
+                handler);
     }
-
-
 }

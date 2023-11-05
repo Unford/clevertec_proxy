@@ -41,3 +41,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 /.idea/
+/proxy/src/main/java/ru/clevertec/course/proxy/Main.java
+/proxy/src/main/java/ru/clevertec/course/proxy/domain/test/*
+

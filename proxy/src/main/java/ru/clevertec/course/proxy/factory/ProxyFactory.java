@@ -1,6 +1,8 @@
 package ru.clevertec.course.proxy.factory;
 
 
-public interface ProxyFactory<T> {
-    Object createProxy(Object object, JoinPointHandler<T> handler);
+import ru.clevertec.course.proxy.handler.ObjectInvocationHandler;
+
+public interface ProxyFactory {
+    Object createProxy(ObjectInvocationHandler handler);
 }

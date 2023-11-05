@@ -1,22 +1,18 @@
 package ru.clevertec.course.proxy.factory.impl;
 
 import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-import ru.clevertec.course.proxy.domain.model.CgLibProxyJoinPoint;
-import ru.clevertec.course.proxy.factory.JoinPointHandler;
+import net.sf.cglib.proxy.InvocationHandler;
 import ru.clevertec.course.proxy.factory.ProxyFactory;
+import ru.clevertec.course.proxy.handler.ObjectInvocationHandler;
 
-public class CgLibProxyFactory implements ProxyFactory<MethodProxy> {
-
+public class CgLibProxyFactory implements ProxyFactory {
 
 
     @Override
-    public Object createProxy(Object object, JoinPointHandler<MethodProxy> handler) {
+    public Object createProxy(ObjectInvocationHandler handler) {
         Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(object.getClass());
-        enhancer.setCallback((MethodInterceptor)(obj, method, args, proxy) ->
-                handler.apply(new CgLibProxyJoinPoint(proxy, obj, method, args)));
+        enhancer.setSuperclass(handler.getObject().getClass());
+        enhancer.setCallback((InvocationHandler) handler::invoke);
         return enhancer.create();
     }
 }
