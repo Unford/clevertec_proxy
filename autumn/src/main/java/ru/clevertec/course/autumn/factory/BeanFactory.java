@@ -40,6 +40,7 @@ public class BeanFactory {
 
     @SneakyThrows
     public <T> T createObject(Class<T> implClass) {
+        System.out.println("Creating " + implClass);
         T t = create(implClass);
 
         configure(t);

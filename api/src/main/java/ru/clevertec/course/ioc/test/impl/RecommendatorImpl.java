@@ -2,13 +2,14 @@ package ru.clevertec.course.ioc.test.impl;
 
 import jakarta.inject.Singleton;
 import ru.clevertec.course.ioc.test.Recommendator;
+import ru.clevertec.course.proxy.annotation.Loggable;
 
 @Singleton
+@Loggable
 public class RecommendatorImpl implements Recommendator {
     private String alcohol= "as";
 
     public RecommendatorImpl() {
-        System.out.println("recommendator was created");
     }
 
     @Override

@@ -17,7 +17,7 @@ public class PolicemanImpl implements Policeman {
 
     @PostConstruct
     public void init() {
-        System.out.println(recommendator.getClass());
+        System.out.println("Post Construct - " + recommendator);
     }
 
     @Override
