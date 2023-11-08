@@ -1,17 +1,25 @@
 package ru.clevertec.course.autumn.factory;
 
 
+import jakarta.inject.Inject;
+import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
+import ru.clevertec.course.autumn.annotation.BeanQualifier;
 import ru.clevertec.course.autumn.context.ApplicationContext;
 import ru.clevertec.course.autumn.factory.configurator.BeanConfigurator;
 import ru.clevertec.course.autumn.factory.configurator.ProxyConfigurator;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BeanFactory {
     private final ApplicationContext context;
@@ -71,7 +79,23 @@ public class BeanFactory {
         configurators.forEach(objectConfigurator -> objectConfigurator.configure(t, context));
     }
 
-    private <T> T create(Class<T> implClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return implClass.getDeclaredConstructor().newInstance();
+    private <T> T create(Class<T> implClass) throws ReflectiveOperationException {
+        Constructor<?> constructor = Arrays.stream(implClass.getConstructors())
+                .filter(c -> c.isAnnotationPresent(Inject.class))
+                .findFirst()
+                .orElse(implClass.getDeclaredConstructor());
+
+        Parameter[] parameters = constructor.getParameters();
+        Object[] initArgs = new Object[parameters.length];
+
+        for (int i = 0; i < initArgs.length; i++) {
+            BeanQualifier qualifier = parameters[i].getAnnotation(BeanQualifier.class);
+
+            initArgs[i] = context.getObject(parameters[i].getType(),
+                    qualifier == null ? null : qualifier.value());
+        }
+
+
+        return (T) constructor.newInstance(initArgs);
     }
 }

@@ -7,6 +7,7 @@ import ru.clevertec.course.autumn.factory.BeanFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 @SuppressWarnings("unchecked")
 public class AnnotationApplicationContext implements ApplicationContext {
 
@@ -21,22 +22,7 @@ public class AnnotationApplicationContext implements ApplicationContext {
 
     @Override
     public <T> T getObject(Class<T> type) {
-        if (cache.containsKey(type)) {
-            return (T) cache.get(type);
-        }
-
-        Class<? extends T> implClass = type;
-
-        if (type.isInterface()) {
-            implClass = config.getImplClass(type);
-        }
-        T t = beanFactory.createObject(implClass);
-
-        if (implClass.isAnnotationPresent(Singleton.class)) {
-            cache.put(type, t);
-        }
-
-        return t;
+        return getObject(type, null);
     }
 
     @Override
@@ -48,7 +34,11 @@ public class AnnotationApplicationContext implements ApplicationContext {
         Class<? extends T> implClass = type;
 
         if (type.isInterface()) {
-            implClass = config.getImplClass(type, name);
+            if (name == null) {
+                implClass = config.getImplClass(type);
+            } else {
+                implClass = config.getImplClass(type, name);
+            }
         }
         T t = beanFactory.createObject(implClass);
 

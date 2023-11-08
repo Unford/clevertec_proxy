@@ -1,6 +1,8 @@
 package ru.clevertec.course.ioc.test.impl;
 
+import ru.clevertec.course.autumn.annotation.BeanQualifier;
 import ru.clevertec.course.ioc.test.Policeman;
+@BeanQualifier("angry")
 
 public class AngryPoliceman implements Policeman {
     @Override
