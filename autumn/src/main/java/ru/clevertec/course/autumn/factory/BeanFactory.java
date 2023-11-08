@@ -2,24 +2,17 @@ package ru.clevertec.course.autumn.factory;
 
 
 import jakarta.inject.Inject;
-import jakarta.inject.Qualifier;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import ru.clevertec.course.autumn.annotation.BeanQualifier;
 import ru.clevertec.course.autumn.context.ApplicationContext;
 import ru.clevertec.course.autumn.factory.configurator.BeanConfigurator;
 import ru.clevertec.course.autumn.factory.configurator.ProxyConfigurator;
+import ru.clevertec.course.proxy.util.ProxyReflectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class BeanFactory {
     private final ApplicationContext context;
@@ -80,22 +73,48 @@ public class BeanFactory {
     }
 
     private <T> T create(Class<T> implClass) throws ReflectiveOperationException {
-        Constructor<?> constructor = Arrays.stream(implClass.getConstructors())
+        Optional<Constructor<?>> optionalConstructor = Arrays.stream(implClass.getConstructors())
                 .filter(c -> c.isAnnotationPresent(Inject.class))
-                .findFirst()
-                .orElse(implClass.getDeclaredConstructor());
+                .findFirst();
 
-        Parameter[] parameters = constructor.getParameters();
-        Object[] initArgs = new Object[parameters.length];
+        if (optionalConstructor.isPresent()) {
+            Constructor<?> constructor = optionalConstructor.get();
+            Parameter[] parameters = constructor.getParameters();
+            Object[] initArgs = new Object[parameters.length];
 
-        for (int i = 0; i < initArgs.length; i++) {
-            BeanQualifier qualifier = parameters[i].getAnnotation(BeanQualifier.class);
+            for (int i = 0; i < initArgs.length; i++) {
+                BeanQualifier qualifier = parameters[i].getAnnotation(BeanQualifier.class);
+                initArgs[i] = context.getObject(parameters[i].getType(),
+                        qualifier == null ? null : qualifier.value());
+            }
 
-            initArgs[i] = context.getObject(parameters[i].getType(),
-                    qualifier == null ? null : qualifier.value());
+            return (T) constructor.newInstance(initArgs);
+        } else {
+            return createObjectWithMinParams(implClass);
         }
 
 
-        return (T) constructor.newInstance(initArgs);
     }
+
+
+    private <T> T createObjectWithMinParams(Class<T> clazz) throws ReflectiveOperationException {
+        Constructor<?> minParamConstructor = ProxyReflectionUtils.getMinParamaterConstructor(clazz);
+
+        int minParamCount = minParamConstructor.getParameterCount();
+        Object[] args = new Object[minParamCount];
+        Parameter[] parameters = minParamConstructor.getParameters();
+
+        int i = 0;
+        for (Parameter p : parameters) {
+            Class<?> paramType = p.getType();
+            args[i++] = ProxyReflectionUtils.getDefaultValueFor(paramType);
+        }
+
+        if (Modifier.isPrivate(minParamConstructor.getModifiers())) {
+            minParamConstructor.setAccessible(true);
+        }
+        return (T) minParamConstructor.newInstance(args);
+    }
+
+
 }

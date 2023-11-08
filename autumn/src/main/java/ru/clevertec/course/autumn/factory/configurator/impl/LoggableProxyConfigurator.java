@@ -20,9 +20,9 @@ public class LoggableProxyConfigurator implements ProxyConfigurator {
             LoggerHandler loggerHandler = new LoggerHandler();
             Object proxyInstance;
             if (ProxyReflectionUtils.hasAnyInterface(implClass)) {
-                proxyInstance = jdkProxyFactory.createProxy(t, loggerHandler);
+                proxyInstance = jdkProxyFactory.createProxy(t, implClass, loggerHandler);
             } else {
-                proxyInstance = cgLibProxyFactory.createProxy(t, loggerHandler);
+                proxyInstance = cgLibProxyFactory.createProxy(t, implClass, loggerHandler);
             }
             return proxyInstance;
         } else {

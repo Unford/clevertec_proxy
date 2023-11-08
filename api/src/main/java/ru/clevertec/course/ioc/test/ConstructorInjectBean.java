@@ -9,13 +9,14 @@ public class ConstructorInjectBean {
     @Inject
     private Announcer announcer;
 
-    private Policeman policeman;
+
+
+    private final Policeman policeman;
 
     @Inject
     public ConstructorInjectBean(@BeanQualifier("angry") Policeman policeman) {
         this.policeman = policeman;
     }
-    public ConstructorInjectBean(){}
 
     public void start(Room room) {
         announcer.announce("announcer call");
@@ -26,5 +27,13 @@ public class ConstructorInjectBean {
 
     private void desinfect(Room room){
         System.out.println("desinfect");
+    }
+
+    public Announcer getAnnouncer() {
+        return announcer;
+    }
+
+    public Policeman getPoliceman() {
+        return policeman;
     }
 }

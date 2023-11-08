@@ -38,9 +38,9 @@ public class ProxyMain {
             LoggerHandler loggerHandler = new LoggerHandler();
             Object proxyInstance;
             if (ProxyReflectionUtils.hasAnyInterface(c)) {
-                proxyInstance = proxyFactory.createProxy(object, loggerHandler);
+                proxyInstance = proxyFactory.createProxy(object, c, loggerHandler);
             } else {
-                proxyInstance = cgLibProxyFactory.createProxy(object, loggerHandler);
+                proxyInstance = cgLibProxyFactory.createProxy(object, c, loggerHandler);
             }
 
 
@@ -60,7 +60,7 @@ public class ProxyMain {
 
         JdkProxyFactory proxyFactory2 = new JdkProxyFactory();
 
-        SecondInterface proxy = (SecondInterface) proxyFactory2.createProxy(new Test2(), new LoggerHandler());
+        SecondInterface proxy = (SecondInterface) proxyFactory2.createProxy(new Test2(), Test2.class, new LoggerHandler());
         proxy.ivy();
 
 
