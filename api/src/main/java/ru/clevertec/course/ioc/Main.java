@@ -7,9 +7,6 @@ import ru.clevertec.course.ioc.test.*;
 public class Main {
 
 
-
-
-
     public static void main(String[] args) throws Exception {
         ApplicationContext context = AutumnApplication.run(Main.class, args);
         CoronaDesinfector desinfector = context.getObject(CoronaDesinfector.class);

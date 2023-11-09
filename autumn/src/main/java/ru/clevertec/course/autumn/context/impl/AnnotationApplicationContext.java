@@ -27,7 +27,7 @@ public class AnnotationApplicationContext implements ApplicationContext {
 
     @Override
     public <T> T getObject(Class<T> type, String name) {
-        if (cache.containsKey(type)) {
+        if (type.isAnnotationPresent(Singleton.class) && cache.containsKey(type)) {
             return (T) cache.get(type);
         }
 
