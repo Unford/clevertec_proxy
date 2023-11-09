@@ -10,11 +10,11 @@ import java.util.StringJoiner;
 public class LoggerHandler implements ObjectInvocationHandler {
 
     @Override
-    public Object invoke(Object object, Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Class<?> baseClass, Object object, Object proxy, Method method, Object[] args) throws Throwable {
         Object result;
-        Method m = object.getClass().getMethod(method.getName(), method.getParameterTypes());
+        Method m = baseClass.getMethod(method.getName(), method.getParameterTypes());
         if (m.isAnnotationPresent(Loggable.class) ||
-                object.getClass().isAnnotationPresent(Loggable.class)) {
+                baseClass.isAnnotationPresent(Loggable.class)) {
             StringBuilder builder = new StringBuilder("Method: \"")
                     .append(method.getName())
                     .append('\"')
@@ -33,8 +33,7 @@ public class LoggerHandler implements ObjectInvocationHandler {
                 builder.append(", Result: \"").append(result).append('\"');
             }
             System.out.println(builder);
-        }
-        else {
+        } else {
             result = method.invoke(object, args);
         }
         return result;

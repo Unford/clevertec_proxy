@@ -18,7 +18,7 @@ public class CgLibProxyFactory implements ProxyFactory {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(tClass);
         enhancer.setCallback((InvocationHandler) (Object proxy, Method method, Object[] args) ->
-                handler.invoke(object, proxy, method, args));
+                handler.invoke(tClass, object, proxy, method, args));
 
         Constructor<?> constructor = ProxyReflectionUtils.getMinParamaterConstructor(tClass);
         Object proxy;

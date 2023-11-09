@@ -60,8 +60,10 @@ public class ProxyMain {
 
         JdkProxyFactory proxyFactory2 = new JdkProxyFactory();
 
-        SecondInterface proxy = (SecondInterface) proxyFactory2.createProxy(new Test2(), Test2.class, new LoggerHandler());
-        proxy.ivy();
+        SecondInterface proxy = proxyFactory2.createProxy(new Test2(), Test2.class, new LoggerHandler());
+        SecondInterface proxy2 =  proxyFactory2.createProxy(proxy, SecondInterface.class, new LoggerHandler());
+        proxy2.ivy();
+
 
 
     }

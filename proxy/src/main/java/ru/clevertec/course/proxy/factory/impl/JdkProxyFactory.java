@@ -10,13 +10,14 @@ public class JdkProxyFactory implements ProxyFactory {
 
 
     @Override
-    public <T> T createProxy(Object object, Class<T> tClass, ObjectInvocationHandler handler) {
-        Class<?>[] interfaces = ProxyReflectionUtils.getAllSuperInterfaces(tClass)
+    public <T> T createProxy(Object object, Class<T> baseClass, ObjectInvocationHandler handler) {
+
+        Class<?>[] interfaces = ProxyReflectionUtils.getAllSuperInterfaces(baseClass)
                 .toArray(new Class[0]);
 
         return (T) Proxy.newProxyInstance(
-                tClass.getClassLoader(),
+                baseClass.getClassLoader(),
                 interfaces,
-                ((proxy, method, args) -> handler.invoke(object, proxy, method, args)));
+                ((proxy, method, args) -> handler.invoke(baseClass, object, proxy, method, args)));
     }
 }

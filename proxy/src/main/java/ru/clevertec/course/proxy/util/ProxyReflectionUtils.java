@@ -19,7 +19,11 @@ public final class ProxyReflectionUtils {
 
     @SuppressWarnings("unchecked")
     public static Set<Class<?>> getAllSuperInterfaces(Class<?> clazz) {
-        return ReflectionUtils.getAllSuperTypes(clazz, Class::isInterface);
+        Set<Class<?>> allSuperTypes = ReflectionUtils.getAllSuperTypes(clazz, Class::isInterface);
+        if (clazz.isInterface()) {
+            allSuperTypes.add(clazz);
+        }
+        return allSuperTypes;
     }
 
     public static Object getDefaultValueFor(Class<?> type) {
